@@ -1,0 +1,7 @@
+xwallet-suite (0.1.0) stable; urgency=medium
+
+  * Initial CI build.
+  * GitHub Actions enabled.
+  * DEB packaging stabilized.
+
+ -- Jaroslav Yosypchuk <jaroslavjosupchuky@gmail.com>  Wed, 13 Dec 2025 18:00:00 +0200
