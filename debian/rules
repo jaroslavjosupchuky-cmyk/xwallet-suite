@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --without install
+
+override_dh_auto_install:
+	# executables
+	install -d debian/xwallet-suite/usr/bin
+	install -m 0755 src/xwallet debian/xwallet-suite/usr/bin/xwallet
+	install -m 0755 src/xwallet-selftest debian/xwallet-suite/usr/bin/xwallet-selftest
+	install -m 0755 src/xwallet-root-helper debian/xwallet-suite/usr/bin/xwallet-root-helper
+
+	# python modules
+	install -d debian/xwallet-suite/usr/lib/xwallet-suite
+	install -m 0644 src/lib/xwallet_full.py debian/xwallet-suite/usr/lib/xwallet-suite/
+	install -m 0644 src/lib/xwallet_selftest.py debian/xwallet-suite/usr/lib/xwallet-suite/
+	install -m 0644 src/lib/xwallet_root_helper.py debian/xwallet-suite/usr/lib/xwallet-suite/
+
+	# desktop file
+	install -d debian/xwallet-suite/usr/share/applications
+	install -m 0644 debian/xwallet-suite.desktop \
+		debian/xwallet-suite/usr/share/applications/xwallet-suite.desktop
+
+	# icon
+	install -d debian/xwallet-suite/usr/share/icons/hicolor/512x512/apps
+	install -m 0644 src/icons/xwallet-suite.png \
+		debian/xwallet-suite/usr/share/icons/hicolor/512x512/apps/xwallet-suite.png
+	# polkit policy
+	install -d debian/xwallet-suite/usr/share/polkit-1/actions
+	install -m 0644 debian/xwallet-suite.policy \
+		 debian/xwallet-suite/usr/share/polkit-1/actions/com.xwallet.policy
