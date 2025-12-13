@@ -1,0 +1,7 @@
+Origin: xWallet
+Label: xWallet Suite
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: xWallet Suite APT Repository

@@ -1,0 +1,16 @@
+Package: xwallet-suite
+Version: 0.1.0
+Architecture: all
+Maintainer: Jaroslav Yosypchuk <jaroslavjosupchuky@gmail.com>
+Installed-Size: 38
+Depends: python3, python3-pyqt5, python3-psutil, pkexec
+Filename: pool/main/x/xwallet-suite/xwallet-suite_0.1.0_all.deb
+Size: 8614
+MD5sum: 20933e291bad6808dc65d839acbfacf1
+SHA1: e6f5cbdd871842bf1a8fc90da7399dba237c7323
+SHA256: 396dc44d9a8fedaf21fef9ea343ddf1d359eb3f7b4e3c6005c0150fb1ca69ac6
+Section: utils
+Priority: optional
+Description: xWallet PRO Suite
+ Advanced crypto wallet recovery suite with PRO raw scan, auto recovery and analytics.
+

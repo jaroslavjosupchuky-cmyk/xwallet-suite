@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+echo "xWallet Suite installed."
+exit 0

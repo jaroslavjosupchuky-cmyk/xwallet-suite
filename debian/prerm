@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+echo "Removing xWallet Suite."
+exit 0

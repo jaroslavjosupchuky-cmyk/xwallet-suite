@@ -1,0 +1,10 @@
+6063d5400c6f062d33ea2d5b05d1e188  usr/bin/xwallet
+bbb2bbbc4fb4920f23bdff200e4144de  usr/bin/xwallet-root-helper
+ac81a3677a64e2cf1b895baa8637c703  usr/bin/xwallet-selftest
+a74057fe7e7a99a9ae01b2f380d59772  usr/lib/xwallet-suite/xwallet_full.py
+40d6fa0b5bf610a0bc535963b77dd7c8  usr/lib/xwallet-suite/xwallet_root_helper.py
+b80e7b6d961293cb33ca45ca04e47ed3  usr/lib/xwallet-suite/xwallet_selftest.py
+cd8aae68133fcfaaa7b0a40dc2a74cf9  usr/share/applications/xwallet-suite.desktop
+be83848ed28ea169a7fbfd6652aaec8a  usr/share/doc/xwallet-suite/changelog.gz
+36285b55c73e04ef78f50b2e950a774f  usr/share/icons/hicolor/512x512/apps/xwallet-suite.png
+907ac10a21793b57b0162eb380067993  usr/share/polkit-1/actions/com.xwallet.root-helper.policy

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=xWallet Suite
+GenericName=Crypto Wallet Recovery
+Comment=Advanced crypto wallet recovery and scanning tool
+Exec=xwallet
+Icon=xwallet-suite
+Terminal=false
+Type=Application
+Categories=Utility;Security;
+StartupNotify=true
