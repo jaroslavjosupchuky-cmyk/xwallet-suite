@@ -1,0 +1,41 @@
+name: Build xWallet Suite (.deb)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            debhelper \
+            dpkg-dev \
+            python3 \
+            python3-pyqt5 \
+            python3-psutil \
+            fakeroot \
+            lintian
+
+      - name: Build DEB package
+        run: |
+          dpkg-buildpackage -us -uc
+
+      - name: Lint package
+        run: |
+          lintian ../*.deb || true
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: xwallet-suite-deb
+          path: ../*.deb
