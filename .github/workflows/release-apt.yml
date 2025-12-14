@@ -10,7 +10,6 @@ permissions:
 jobs:
   apt:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -21,10 +20,10 @@ jobs:
 
       - name: Import GPG key
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          gpgconf --kill gpg-agent
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          printf '%s' "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
 
       - name: Generate Packages
         run: |
@@ -32,25 +31,32 @@ jobs:
           dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
           gzip -kf dists/stable/main/binary-all/Packages
 
-      - name: Generate Release
+      - name: Generate Release (with headers)
         run: |
-          apt-ftparchive release dists/stable > dists/stable/Release
+          cat > dists/stable/Release <<'EOF'
+Origin: xWallet
+Label: xWallet
+Suite: stable
+Codename: stable
+Architectures: amd64 all
+Components: main
+Description: xWallet APT repository
+EOF
+          apt-ftparchive release dists/stable >> dists/stable/Release
 
-      - name: Sign Release
+      - name: Sign Release + InRelease
+        env:
+          KEYID: ${{ secrets.GPG_KEY_ID }}
+          PASS: ${{ secrets.GPG_PASSPHRASE }}
         run: |
+          # якщо ключ БЕЗ пароля — PASS можна не задавати і прибрати --passphrase
           gpg --batch --yes --pinentry-mode loopback \
-              -u "${{ secrets.GPG_KEY_ID }}" \
-              -abs \
-              -o dists/stable/Release.gpg \
-              dists/stable/Release
+            ${PASS:+--passphrase "$PASS"} \
+            -u "$KEYID" -abs -o dists/stable/Release.gpg dists/stable/Release
 
-      - name: Generate InRelease
-        run: |
           gpg --batch --yes --pinentry-mode loopback \
-              -u "${{ secrets.GPG_KEY_ID }}" \
-              --clearsign \
-              -o dists/stable/InRelease \
-              dists/stable/Release
+            ${PASS:+--passphrase "$PASS"} \
+            -u "$KEYID" --clearsign -o dists/stable/InRelease dists/stable/Release
 
       - name: Commit & push
         run: |
@@ -58,4 +64,4 @@ jobs:
           git config user.email "actions@github.com"
           git add dists
           git commit -m "APT: auto-update metadata" || echo "No changes"
-          git push origin gh-pages
+          git push
