@@ -1,0 +1,51 @@
+name: Publish APT repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        run: |
+          sudo apt update
+          sudo apt install -y gnupg dpkg-dev apt-utils
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+
+      - name: Build Packages index
+        run: |
+          dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
+          gzip -kf dists/stable/main/binary-all/Packages
+
+      - name: Generate Release
+        run: |
+          apt-ftparchive release dists/stable > dists/stable/Release
+
+      - name: Sign Release
+        run: |
+          gpg --batch --yes --pinentry-mode loopback \
+            -abs -o dists/stable/Release.gpg dists/stable/Release
+          gpg --batch --yes --pinentry-mode loopback \
+            --clearsign -o dists/stable/InRelease dists/stable/Release
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add dists pool
+          git commit -m "Update APT repository" || echo "Nothing to commit"
+          git push origin gh-pages
