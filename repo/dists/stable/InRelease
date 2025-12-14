@@ -1,0 +1,36 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Date: Sun, 14 Dec 2025 11:06:57 +0000
+MD5Sum:
+ 7c4a18f9804b2bf8970267d91b35e576               38 Release
+ 2e144bfca0b9c987a755b089b6fe43b7              582 main/binary-amd64/Packages
+ e1b982b68f13ce7baf2a259476d5bb78              425 main/binary-amd64/Packages.gz
+SHA1:
+ aaa75f0af08b699ff7a358481a4f96439e16b0a6               38 Release
+ 3cf3568553c0ea65ffcd1df9b246380a864344bd              582 main/binary-amd64/Packages
+ be447986c62fc33c8eb1d0156987e798aeb493f0              425 main/binary-amd64/Packages.gz
+SHA256:
+ dc913373da9f4a944b2565bdbd0310644f0f778b0274d2129c14a0466160248c               38 Release
+ 8b7812e73ed7f1d99c2040a04ea7eee8ea538aab8375e14949716bd7065e942c              582 main/binary-amd64/Packages
+ c81bbcd60a337511dce43d7fbcd966614fc684556743453c6251aa4c76fcb309              425 main/binary-amd64/Packages.gz
+SHA512:
+ bf5b28ec9670d8286f28915205b7d8b669a2a019c5097359b94f26397cd6ed2bbdafc0f7f3cec3bc34a56d31ba01251530fa7bf04812365a3ce96a9a766e8334               38 Release
+ 835102603c64a58b95fa0ee65ab094f630246237826e9055d409175871635d72b02db0c71559ab74af3b5b78728c1232421f866d11acee5149b8c1ec8739853a              582 main/binary-amd64/Packages
+ 506251f2cba05b96f9f8df05620878530b499ad0d205d3689f4f892d3fc4a0333c29197ab0697a1ce7f49afc35bdbc7972835b6f1759e7ba2d5a0dec76ceb26a              425 main/binary-amd64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE6x/ZFh7fcDr3nMJW8cnAAWVk62sFAmk+myIACgkQ8cnAAWVk
+62v7Ng/+NBX6HJauHWKTcrG4hvSQS5cLX9jc4xEJRdKQukCImn98avcDim48JXRB
+qJthoJoyunzqy5EK9cFk9NlwLp9C/JDNAC9K8iXMSwAlxsOQvmz4MvpPNR2yGiYQ
+nPzzN4ON3QfKPXZ8H1BK1p1VMeDOiCqC6cH/w9VgUFCgJV12jB2jAjIbnocjaQCL
+BV7zlB8Kju8268FZKlcgkdvg/ex2lArDT2BF6KB+JY5l2I6NCgHdjvGLax+bK0fY
+SSUezZCAlwA3WbyhuJI9yloIb2yaDinSqW1R3Qn0gAsu5idhtMYGifD1YVC3qotS
+OIOBY180PfGx+1QIslwP3/GB/XQLwrpgKV5kJO8mV/YQHUciqYvxUB2+x0Qi0f0Z
+fB3NzFJcgSJ1kmZ2ivQ99x2L6bXy6qar2W4He6K08x6BI9LKth0J0pbNGY2s0s0x
+XBCnkkIIzjfXG6LmwjdCfDNlj7PxiYUq1ngAEJJb0WLWRqjW0Rz+llEjRVblavey
+RlL7nRBU2ce9fDDEO/na0qFHZ6B2xxZ7H/XJWzUcUpaxdMAvsa7N0poSr9CdzqhJ
+VwO/Er3e58UPZCsr11pbCOsY4S1JI9rf36J0+e95n0Ul2X8K09qZa13fZQF/s6rs
+iaWxN47hu7+NUvtF4JZWipNuZhKSiN4akGO8dH8E0NYhk03Hl64=
+=jOyP
+-----END PGP SIGNATURE-----
