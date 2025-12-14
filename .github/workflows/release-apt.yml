@@ -22,6 +22,9 @@ jobs:
       - name: Import GPG key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent
 
       - name: Generate Packages
         run: |
@@ -55,4 +58,4 @@ jobs:
           git config user.email "actions@github.com"
           git add dists
           git commit -m "APT: auto-update metadata" || echo "No changes"
-          git push
+          git push origin gh-pages
