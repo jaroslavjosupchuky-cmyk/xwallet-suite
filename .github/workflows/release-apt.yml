@@ -1,0 +1,49 @@
+name: Build & Publish APT repo
+
+on:
+  push:
+    branches: [ "gh-pages" ]
+
+jobs:
+  apt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt update
+          sudo apt install -y gnupg dpkg-dev apt-utils
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+
+      - name: Generate Packages
+        run: |
+          dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
+          gzip -kf dists/stable/main/binary-all/Packages
+
+      - name: Generate Release
+        run: |
+          apt-ftparchive release dists/stable > dists/stable/Release
+
+      - name: Sign Release
+        run: |
+          gpg --batch --yes --pinentry-mode loopback \
+              -u "${{ secrets.GPG_KEY_ID }}" \
+              -abs \
+              -o dists/stable/Release.gpg \
+              dists/stable/Release
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add dists
+          git commit -m "APT: auto-update metadata" || echo "No changes"
+          git push
