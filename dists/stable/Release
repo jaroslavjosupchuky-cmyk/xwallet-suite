@@ -1,3 +1,10 @@
+Origin: xWallet
+Label: xWallet
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: xWallet APT repository
 Date: Sun, 14 Dec 2025 14:14:00 +0000
 MD5Sum:
  a0c84de0a49460cb8d2175b69fe5f07a               38 Release
