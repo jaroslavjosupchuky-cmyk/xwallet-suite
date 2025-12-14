@@ -10,6 +10,7 @@ permissions:
 jobs:
   apt:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -34,14 +35,15 @@ jobs:
       - name: Generate Release (with headers)
         run: |
           cat > dists/stable/Release <<'EOF'
-Origin: xWallet
-Label: xWallet
-Suite: stable
-Codename: stable
-Architectures: amd64 all
-Components: main
-Description: xWallet APT repository
-EOF
+          Origin: xWallet
+          Label: xWallet
+          Suite: stable
+          Codename: stable
+          Architectures: amd64 all
+          Components: main
+          Description: xWallet APT repository
+          EOF
+
           apt-ftparchive release dists/stable >> dists/stable/Release
 
       - name: Sign Release + InRelease
@@ -49,7 +51,6 @@ EOF
           KEYID: ${{ secrets.GPG_KEY_ID }}
           PASS: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          # якщо ключ БЕЗ пароля — PASS можна не задавати і прибрати --passphrase
           gpg --batch --yes --pinentry-mode loopback \
             ${PASS:+--passphrase "$PASS"} \
             -u "$KEYID" -abs -o dists/stable/Release.gpg dists/stable/Release
