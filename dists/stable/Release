@@ -1,7 +1,17 @@
-Origin: xWallet
-Label: xWallet Suite
-Suite: stable
-Codename: stable
-Architectures: amd64
-Components: main
-Description: xWallet Suite APT Repository
+Date: Sun, 14 Dec 2025 14:14:00 +0000
+MD5Sum:
+ a0c84de0a49460cb8d2175b69fe5f07a               38 Release
+ d41d8cd98f00b204e9800998ecf8427e                0 main/binary-amd64/Packages
+ c0852ce21c9c7dc412db83951d60d01d               29 main/binary-amd64/Packages.gz
+SHA1:
+ 0a54df38eff90f1282772e12f14679ff07ae4101               38 Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709                0 main/binary-amd64/Packages
+ 644c9d55032bdbe1eee3b59b93a0496c3be69060               29 main/binary-amd64/Packages.gz
+SHA256:
+ 10342e71e1d9de5cf0776717625e4b8004aeddca52c83aed1d744adbf1e62fdd               38 Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 main/binary-amd64/Packages
+ 57a380105942bb2188cf0d131c67579da9a079dfc1e2ec74bc096539af61ef3d               29 main/binary-amd64/Packages.gz
+SHA512:
+ fcf62aa22378cf4dc1b01c93eafd7b8dc5089b0747ca6cbdfa360e46a8762d8de9dd43a3ac262a06c76edc91f460309fcf2535de0a8382c454dfbc8884a9b4d6               38 Release
+ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 main/binary-amd64/Packages
+ d22f9a13089fb751011542b7ea6ebb7e653bacbdc3ed4be9c48cccc8d763e2ee24ed5a6f6166e582873885cfe639f64db01c37485018a67c91f3465483515fa3               29 main/binary-amd64/Packages.gz
