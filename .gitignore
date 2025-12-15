@@ -1,0 +1,20 @@
+# Debian build artifacts
+debian/.debhelper/
+debian/files
+debian/xwallet-suite/DEBIAN/
+
+# Generated binaries
+debian/xwallet-suite/usr/
+debian/xwallet-suite/usr/**
+
+# Keys (CRITICAL)
+*.asc
+*.key
+*.gpg
+private.*
+xwallet-private.*
+
+# APT lists (only metadata allowed)
+!dists/stable/Release
+!dists/stable/InRelease
+dists/stable/*.gpg

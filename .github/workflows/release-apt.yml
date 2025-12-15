@@ -2,67 +2,80 @@ name: Build & Publish APT repo
 
 on:
   push:
-    branches: [ "gh-pages" ]
+    branches: ["gh-pages"]
 
 permissions:
   contents: write
 
 jobs:
   apt:
+    # щоб не запускалось повторно на комітах, які зробив сам GitHub Actions бот
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install tools
         run: |
-          sudo apt update
-          sudo apt install -y gnupg dpkg-dev apt-utils
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gnupg dpkg-dev apt-utils ca-certificates
 
       - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
+          set -euo pipefail
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
-          printf '%s' "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
-      - name: Generate Packages
+      - name: Build Packages index
         run: |
+          set -euo pipefail
+
+          # Packages (для архітектурно-незалежних .deb)
           mkdir -p dists/stable/main/binary-all
           dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
           gzip -kf dists/stable/main/binary-all/Packages
 
-      - name: Generate Release (with headers)
-        run: |
-          cat > dists/stable/Release <<'EOF'
-          Origin: xWallet
-          Label: xWallet
-          Suite: stable
-          Codename: stable
-          Architectures: amd64 all
-          Components: main
-          Description: xWallet APT repository
-          EOF
-
-          apt-ftparchive release dists/stable >> dists/stable/Release
-
-      - name: Sign Release + InRelease
+      - name: Build Release & InRelease (signed)
         env:
           KEYID: ${{ secrets.GPG_KEY_ID }}
           PASS: ${{ secrets.GPG_PASSPHRASE }}
         run: |
+          set -euo pipefail
+
+          # Release генеруємо ДЕТЕРМІНОВАНО (без cat headers і без >>)
+          apt-ftparchive release dists/stable > dists/stable/Release
+
+          # InRelease = Release + підпис в одному файлі (найнадійніше для APT)
           gpg --batch --yes --pinentry-mode loopback \
             ${PASS:+--passphrase "$PASS"} \
-            -u "$KEYID" -abs -o dists/stable/Release.gpg dists/stable/Release
+            -u "$KEYID" --clearsign \
+            -o dists/stable/InRelease dists/stable/Release
 
-          gpg --batch --yes --pinentry-mode loopback \
-            ${PASS:+--passphrase "$PASS"} \
-            -u "$KEYID" --clearsign -o dists/stable/InRelease dists/stable/Release
+          # прибираємо detached signature щоб не було гібридного режиму
+          rm -f dists/stable/Release.gpg
 
-      - name: Commit & push
+      - name: Commit & push metadata
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add dists
-          git commit -m "APT: auto-update metadata" || echo "No changes"
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -A dists
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "APT: update metadata [skip ci]"
           git push
