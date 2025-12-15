@@ -45,17 +45,7 @@ jobs:
 
       - name: Generate Release
         run: |
-          cat > dists/stable/Release <<'EOF'
-          Origin: xWallet
-          Label: xWallet
-          Suite: stable
-          Codename: stable
-          Architectures: amd64 all
-          Components: main
-          Description: xWallet APT repository
-          EOF
-
-          apt-ftparchive release dists/stable >> dists/stable/Release
+          apt-ftparchive release dists/stable > dists/stable/Release
 
       - name: Sign InRelease
         env:
