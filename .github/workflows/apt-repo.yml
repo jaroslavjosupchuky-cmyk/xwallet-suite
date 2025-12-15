@@ -1,51 +1,78 @@
-name: Publish APT repository
+name: Build & Publish APT repo
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "gh-pages" ]
+
+permissions:
+  contents: write
 
 jobs:
-  build-repo:
+  apt:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Install tools
+      - name: Install required tools
         run: |
           sudo apt update
           sudo apt install -y gnupg dpkg-dev apt-utils
 
-      - name: Import GPG key
+      - name: Import GPG private key
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          gpgconf --kill gpg-agent
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
 
-      - name: Build Packages index
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
+          printf '%s' "${{ secrets.GPG_PRIVATE_KEY }}" | \
+            gpg --batch --import
+
+          gpg --list-secret-keys --keyid-format LONG
+
+      - name: Generate Packages
         run: |
-          dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
-          gzip -kf dists/stable/main/binary-all/Packages
+          mkdir -p dists/stable/main/binary-amd64
+          mkdir -p dists/stable/main/binary-all
+
+          dpkg-scanpackages pool /dev/null \
+            > dists/stable/main/binary-amd64/Packages
+          gzip -kf dists/stable/main/binary-amd64/Packages
 
       - name: Generate Release
         run: |
-          apt-ftparchive release dists/stable > dists/stable/Release
+          cat > dists/stable/Release <<'EOF'
+Origin: xWallet
+Label: xWallet
+Suite: stable
+Codename: stable
+Architectures: amd64 all
+Components: main
+Description: xWallet APT repository
+EOF
 
-      - name: Sign Release
+          apt-ftparchive release dists/stable >> dists/stable/Release
+
+      - name: Sign InRelease
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          gpg --batch --yes --pinentry-mode loopback \
-            -abs -o dists/stable/Release.gpg dists/stable/Release
-          gpg --batch --yes --pinentry-mode loopback \
-            --clearsign -o dists/stable/InRelease dists/stable/Release
+          gpg --batch --yes \
+            --pinentry-mode loopback \
+            --passphrase "$GPG_PASSPHRASE" \
+            --local-user F1C9C0016564EB6B \
+            --clearsign \
+            -o dists/stable/InRelease \
+            dists/stable/Release
 
-      - name: Commit and push
+      - name: Commit and push APT metadata
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add dists pool
-          git commit -m "Update APT repository" || echo "Nothing to commit"
-          git push origin gh-pages
+          git config user.email "github-actions@github.com"
+
+          git add dists/stable/InRelease dists/stable/Release dists/stable/main
+          git commit -m "apt: update repository metadata" || true
+          git push
