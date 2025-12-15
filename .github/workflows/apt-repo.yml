@@ -2,7 +2,8 @@ name: Build & Publish APT repo
 
 on:
   push:
-    branches: [ "gh-pages" ]
+    branches:
+      - gh-pages
 
 permissions:
   contents: write
@@ -21,6 +22,8 @@ jobs:
           sudo apt install -y gnupg dpkg-dev apt-utils
 
       - name: Import GPG private key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
@@ -28,9 +31,7 @@ jobs:
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
 
-          printf '%s' "${{ secrets.GPG_PRIVATE_KEY }}" | \
-            gpg --batch --import
-
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Generate Packages
@@ -45,14 +46,14 @@ jobs:
       - name: Generate Release
         run: |
           cat > dists/stable/Release <<'EOF'
-Origin: xWallet
-Label: xWallet
-Suite: stable
-Codename: stable
-Architectures: amd64 all
-Components: main
-Description: xWallet APT repository
-EOF
+          Origin: xWallet
+          Label: xWallet
+          Suite: stable
+          Codename: stable
+          Architectures: amd64 all
+          Components: main
+          Description: xWallet APT repository
+          EOF
 
           apt-ftparchive release dists/stable >> dists/stable/Release
 
@@ -70,16 +71,15 @@ EOF
 
       - name: Commit and push APT metadata
         run: |
-    git config user.name "github-actions"
-    git config user.email "github-actions@github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-    git add dists/stable || true
+          git add dists/stable || true
 
-    if git diff --cached --quiet; then
-      echo "No APT changes to commit"
-      exit 0
-    fi
+          if git diff --cached --quiet; then
+            echo "No APT changes to commit"
+            exit 0
+          fi
 
-    git commit -m "apt: update repository metadata"
-    git push
-
+          git commit -m "apt: update repository metadata"
+          git push
