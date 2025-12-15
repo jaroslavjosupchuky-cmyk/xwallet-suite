@@ -45,12 +45,27 @@ jobs:
           dpkg-scanpackages pool /dev/null > dists/stable/main/binary-all/Packages
           gzip -kf dists/stable/main/binary-all/Packages
 
-      - name: Build Release & InRelease (signed)
+            - name: Build Release & InRelease (signed)
         env:
-          KEYID: ${{ secrets.GPG_KEY_ID }}
           PASS: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           set -euo pipefail
+
+          # 1. Генеруємо Release (ОДИН РАЗ, без >>)
+          apt-ftparchive release dists/stable > dists/stable/Release
+
+          # 2. Вбиваємо агент (важливо для CI)
+          gpgconf --kill gpg-agent || true
+
+          # 3. Підписуємо InRelease (БЕЗ -u, БЕЗ TTY)
+          gpg --batch --yes --no-tty --pinentry-mode loopback \
+            ${PASS:+--passphrase "$PASS"} \
+            --clearsign \
+            -o dists/stable/InRelease dists/stable/Release
+
+          # 4. Забираємо Release.gpg (щоб не було гібриду)
+          rm -f dists/stable/Release.gpg
+
 
           # Release генеруємо ДЕТЕРМІНОВАНО (без cat headers і без >>)
           apt-ftparchive release dists/stable > dists/stable/Release
