@@ -28,7 +28,7 @@ jobs:
           set -e
           dpkg-buildpackage -us -uc
 
-          # повертаємо .deb у workspace
+          # ❗ ОБОВʼЯЗКОВО: копіюємо .deb у workspace
           mkdir -p dist
           cp ../xwallet-suite_*.deb dist/
 
